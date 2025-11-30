@@ -213,15 +213,8 @@ python api_tests/A2.auth_login.py
 **3. Get All Users (Admin Only)**
 Uses the saved token to fetch the user list.
 ```bash
-python api_tests/users_get_all.py
+python api_tests/B2.users_get_all.py
 ```
-
-**Other available scripts:**
--   `auth_refresh_tokens.py`
--   `auth_logout.py`
--   `users_create.py`
--   `users_update.py`
--   `users_delete.py`
 
 ---
 
