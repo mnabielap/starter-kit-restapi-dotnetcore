@@ -8,8 +8,9 @@ public interface IUserRepository : IGenericRepository<User>
     Task<User?> GetByEmailAsync(string email);
     Task<bool> ExistsByEmailAsync(string email, int? excludeUserId = null);
     
-    // For pagination/filtering
     Task<(IEnumerable<User> Users, int TotalCount)> FindAllAsync(
+        string? search,
+        string? scope,
         string? name, 
         Role? role, 
         string? sortBy, 

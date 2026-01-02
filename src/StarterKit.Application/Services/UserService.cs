@@ -47,6 +47,8 @@ public class UserService : IUserService
         }
 
         var (users, totalCount) = await _unitOfWork.Users.FindAllAsync(
+            filter.Search,
+            filter.Scope,
             filter.Name, 
             roleFilter, 
             filter.SortBy, 

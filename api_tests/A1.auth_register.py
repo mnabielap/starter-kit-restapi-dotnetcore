@@ -1,41 +1,34 @@
 import sys
 import os
+import time
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
 from utils import send_and_print, BASE_URL, save_config
 
-def register_admin():
-    url = f"{BASE_URL}/auth/register"
-    body = {
-        "name": "Super Admin",
-        "email": "admin@example.com",
-        "password": "Password123!" # Meets complexity requirements
-    }
-    
-    # Note: The .NET implementation sets Role='User' by default in AuthService.RegisterAsync.
-    # To get an admin, you might need to manually update the DB or modify the code 
-    # if the registration endpoint doesn't accept a 'role' parameter (the DTO doesn't have it).
-    # Based on the provided C# code, RegisterRequest only has Name, Email, Password.
-    
-    response = send_and_print(
-        url=url,
-        method="POST",
-        body=body,
-        headers={"Content-Type": "application/json"},
-        output_file=f"{os.path.splitext(os.path.basename(__file__))[0]}.json"
-    )
+# Generate a unique email to avoid conflict
+unique_id = int(time.time())
+email = f"testuser_{unique_id}@example.com"
 
-    if response.status_code == 201:
-        data = response.json()
-        tokens = data.get("tokens", {})
-        
-        # Save tokens for subsequent requests
-        if tokens:
-            save_config("access_token", tokens["access"]["token"])
-            save_config("refresh_token", tokens["refresh"]["token"])
-            print("\n[SUCCESS] Tokens saved to secrets.json")
-    else:
-        print("\n[ERROR] Registration failed.")
+print(f"--- REGISTERING NEW USER: {email} ---")
 
-if __name__ == "__main__":
-    register_admin()
+url = f"{BASE_URL}/auth/register"
+
+payload = {
+    "name": "Test User Automator",
+    "email": email,
+    "password": "password123",
+    "role": "user",
+}
+
+response = send_and_print(
+    url=url,
+    method="POST",
+    body=payload,
+    output_file=f"{os.path.splitext(os.path.basename(__file__))[0]}.json"
+)
+
+# Optional: Save tokens if you want to use this user immediately
+if response.status_code == 201:
+    data = response.json()
+    save_config("accessToken", data['tokens']['access']['token'])
+    save_config("refreshToken", data['tokens']['refresh']['token'])
+    print(">>> Registration successful. Tokens saved to secrets.json.")
